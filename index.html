@@ -1,0 +1,527 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tax Docu</title>
+<meta name="description" content="세무대리인용 홈택스 신고 서류 자동 출력 프로그램 Tax Docu — 다운로드와 사용 가이드">
+<link rel="icon" href="images/icon.png">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+<style>
+/* 위쪽 탭 [다운로드 | 사용 가이드 | 바뀐 점] — 다운로드는 한 장, 가이드는 왼쪽 목차 + 본문 */
+:root{
+  --bg:#f3f2ee; --card:#ffffff; --text:#23262b; --sub:#5f646c; --line:#e3e1db; --track:#eeece6;
+  --accent:#3f5f4a; --soft:rgba(63,95,74,.08); --on-accent:#ffffff; --note:#f7efe2; --note-line:#e6cfa8;
+  --win-blue:#0b5cad; --win-gray:#f0f0f0; --win-gray-text:#1a1a1a; --hl:#ffd54a;
+  --font:"IBM Plex Sans KR","Malgun Gothic","Apple SD Gothic Neo",system-ui,sans-serif;
+  --top-h:56px;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#1b1f1d; --card:#252a27; --text:#eef1ed; --sub:#b5bcb6; --line:#3a413c; --track:#2f3532;
+  --accent:#8cc79e; --soft:rgba(140,199,158,.16); --on-accent:#111613; --note:#2e2a22; --note-line:#5a4a30;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#1b1f1d; --card:#252a27; --text:#eef1ed; --sub:#b5bcb6; --line:#3a413c; --track:#2f3532;
+  --accent:#8cc79e; --soft:rgba(140,199,158,.16); --on-accent:#111613; --note:#2e2a22; --note-line:#5a4a30;
+  color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-padding-top:calc(var(--top-h) + 16px)}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font);font-size:15.5px;line-height:1.7;-webkit-font-smoothing:antialiased}
+img{max-width:100%;display:block}
+a{color:var(--accent)}
+h1,h2,h3{line-height:1.35;text-wrap:balance;margin:0}
+p{margin:0}
+.gutter{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.inner{max-width:1200px;margin:0 auto}
+.sub{color:var(--sub)}
+kbd,.k{display:inline-block;font:inherit;font-size:.9em;font-weight:600;padding:0 7px;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;background:var(--card);white-space:nowrap}
+
+/* 위쪽 줄 */
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--card)}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--card);border-bottom:1px solid var(--line)}
+header .inner{display:flex;align-items:center;gap:28px;height:var(--top-h)}
+.logo{display:flex;align-items:center;gap:9px;font-weight:700;font-size:17px;text-decoration:none;color:var(--text);flex:none}
+.logo img{width:28px;height:28px;border-radius:7px}
+.tabs{display:flex;gap:22px;height:100%;overflow-x:auto;scrollbar-width:none}
+.tabs a{display:flex;align-items:center;color:var(--sub);text-decoration:none;font-size:14.5px;white-space:nowrap;box-shadow:inset 0 -2px 0 transparent}
+.tabs a:hover{color:var(--text)}
+.tabs a.on{color:var(--text);font-weight:600;box-shadow:inset 0 -2px 0 var(--accent)}
+a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+
+/* 버튼 */
+.btn{display:inline-flex;align-items:center;gap:9px;border-radius:9px;padding:11px 20px;font:inherit;font-weight:600;font-size:15px;text-decoration:none;border:1px solid transparent;cursor:pointer;background:var(--accent);color:var(--on-accent)}
+.btn:hover{filter:brightness(1.08)}
+.btn.big{padding:15px 28px;font-size:17px;border-radius:11px}
+.btn.ghost{background:var(--card);color:var(--text);border-color:var(--line)}
+.btn svg{width:20px;height:20px;flex:none}
+
+/* 다운로드 화면 */
+.hero{padding-block:56px 40px}
+.hero .inner{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.6fr);gap:44px;align-items:center}
+.hero-txt{display:grid;gap:18px;justify-items:start}
+.eyebrow{font-size:13px;font-weight:600;letter-spacing:.04em;color:var(--accent);background:var(--soft);padding:3px 10px;border-radius:5px}
+.hero h1{font-size:clamp(28px,3.4vw,38px);letter-spacing:-.01em}
+.hero-lead{font-size:16.5px;color:var(--sub);max-width:34ch}
+.hero-btns{display:flex;flex-wrap:wrap;gap:10px}
+.dl-meta{font-size:13.5px;color:var(--sub);font-variant-numeric:tabular-nums}
+.shot{border-radius:12px;border:1px solid var(--line);box-shadow:0 10px 30px rgba(20,30,25,.10);overflow:hidden;background:var(--card)}
+.shot .dark{display:none}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .shot .light{display:none}:root:not([data-theme="light"]) .shot .dark{display:block}}
+:root[data-theme="dark"] .shot .light{display:none} :root[data-theme="dark"] .shot .dark{display:block}
+.shot-cap{font-size:12.5px;color:var(--sub);margin-top:8px;text-align:right}
+
+.band{padding-block:40px;border-top:1px solid var(--line)}
+.band h2{font-size:22px;margin-bottom:6px}
+.band .lead{color:var(--sub);margin-bottom:22px;max-width:68ch}
+.three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px;display:grid;gap:10px;align-content:start;min-width:0}
+.box .n{font-size:13px;font-weight:700;color:var(--accent)}
+.box h3{font-size:17px}
+.feat{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.feat div{display:grid;gap:4px;align-content:start}
+.feat b{font-size:15.5px}
+.feat span{font-size:14px;color:var(--sub)}
+
+/* Windows 보호 창 그림 */
+.wins{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:4px}
+.win{border-radius:4px;font-family:"Segoe UI","Malgun Gothic",sans-serif;font-size:12.5px;line-height:1.5;overflow:hidden;min-width:0}
+.win.blue{background:var(--win-blue);color:#fff;padding:16px 18px;display:grid;gap:8px}
+.win.blue .t{font-size:19px;font-weight:300}
+.win.blue .lnk{text-decoration:underline}
+.win.blue .row{display:flex;justify-content:flex-end;gap:6px;margin-top:6px}
+.win.blue .row span{border:2px solid rgba(255,255,255,.75);padding:3px 16px}
+.win.gray{background:var(--win-gray);color:var(--win-gray-text);border:1px solid #c9c9c9}
+.win.gray .tb{background:#fff;padding:6px 10px;font-size:12px;border-bottom:1px solid #ddd}
+.win.gray .body{padding:12px 14px;display:grid;gap:8px}
+.win.gray .row{display:flex;justify-content:flex-end;gap:6px}
+.win.gray .row span{background:#e1e1e1;border:1px solid #adadad;padding:2px 18px}
+.win .hl{outline:3px solid var(--hl);outline-offset:2px}
+.win-cap{font-size:13.5px;margin-top:8px}
+.win-cap b{color:var(--accent)}
+
+.note{background:var(--note);border:1px solid var(--note-line);border-radius:10px;padding:12px 16px;font-size:14.5px}
+.note b{font-weight:600}
+
+/* 가이드 화면 */
+.guide{display:grid;grid-template-columns:240px minmax(0,1fr);gap:40px;padding-block:28px 64px;align-items:start}
+.toc{position:sticky;top:calc(var(--top-h) + env(safe-area-inset-top,0px) + 20px);max-height:calc(100vh - var(--top-h) - 40px);overflow-y:auto;display:grid;gap:2px;font-size:14.5px;padding-bottom:12px}
+.toc input{width:100%;font:inherit;font-size:14px;padding:8px 11px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--text);margin-bottom:10px}
+.toc .grp{font-size:12.5px;font-weight:700;letter-spacing:.04em;color:var(--sub);margin:12px 0 2px;padding:0 10px}
+#toc-list{display:grid;gap:2px}
+.toc a{display:block;padding:5px 10px;border-radius:6px;color:var(--text);text-decoration:none}
+.toc a:hover{background:var(--track)}
+.toc a.on{background:var(--soft);color:var(--accent);font-weight:600}
+.toc .empty{padding:6px 10px;color:var(--sub);font-size:13.5px}
+article{min-width:0;max-width:760px;display:grid;gap:18px}
+article .crumb{font-size:13px;color:var(--sub)}
+article h1{font-size:28px}
+article h2{font-size:19px;margin-top:10px}
+article ol,article ul{margin:0;padding-left:22px;display:grid;gap:6px}
+article .fig{margin:4px 0}
+.pager{display:flex;justify-content:space-between;gap:12px;margin-top:20px;padding-top:20px;border-top:1px solid var(--line)}
+.pager a{display:grid;gap:2px;text-decoration:none;padding:10px 14px;border:1px solid var(--line);border-radius:10px;background:var(--card);min-width:0;max-width:48%}
+.pager a span{font-size:12.5px;color:var(--sub)}
+.pager a b{color:var(--text);font-weight:600}
+.pager a.next{margin-left:auto;text-align:right}
+.toc-toggle{display:none}
+
+/* 바뀐 점 */
+.changes{padding-block:36px 64px;max-width:760px;display:grid;gap:14px}
+.changes h1{font-size:26px}
+.rel{display:grid;grid-template-columns:120px minmax(0,1fr);gap:16px;padding:14px 0;border-top:1px solid var(--line)}
+.rel b{font-variant-numeric:tabular-nums}
+.rel .d{font-size:13px;color:var(--sub);font-variant-numeric:tabular-nums}
+
+footer{border-top:1px solid var(--line);padding-block:22px;font-size:13.5px;color:var(--sub)}
+footer .inner{display:flex;flex-wrap:wrap;gap:6px 22px}
+
+.view[hidden]{display:none!important}
+
+@media (max-width:860px){
+  .hero .inner{grid-template-columns:1fr;gap:32px}
+  .three,.wins{grid-template-columns:1fr}
+  .feat{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .guide{grid-template-columns:1fr;gap:16px}
+  .toc{position:static;max-height:none;border:1px solid var(--line);border-radius:10px;background:var(--card);padding:10px}
+  .toc.closed>:not(.toc-toggle){display:none}
+  .toc-toggle{display:flex;justify-content:space-between;width:100%;font:inherit;font-weight:600;background:none;border:0;color:var(--text);padding:4px 6px;cursor:pointer}
+  .rel{grid-template-columns:1fr;gap:2px}
+}
+@media (max-width:480px){.feat{grid-template-columns:1fr}.tabs{gap:16px}header .inner{gap:16px}.logo span{display:none}}
+@media (prefers-reduced-motion:no-preference){.btn{transition:filter .15s}}
+</style>
+</head>
+<body>
+<header class="gutter">
+  <div class="inner">
+    <a class="logo" href="#"><img src="images/icon.png" alt=""><span>Tax Docu</span></a>
+    <nav class="tabs">
+      <a href="#" data-tab="home">다운로드</a>
+      <a href="#guide" data-tab="guide">사용 가이드</a>
+      <a href="#changes" data-tab="changes">바뀐 점</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ───────── 다운로드 ───────── -->
+<main class="view" id="view-home">
+  <section class="hero gutter">
+    <div class="inner">
+      <div class="hero-txt">
+        <span class="eyebrow">세무대리인용 · Windows 10 / 11</span>
+        <h1>신고기간 서류 출력,<br>거래처 고르고 [출력]만</h1>
+        <p class="hero-lead">홈택스에서 거래처마다 반복하던 신고도움서비스 · 세금계산서 합계표 · 신용카드 매출 등 8종 서류를 자동으로 조회해 인쇄하거나 PDF로 저장합니다.</p>
+        <div class="hero-btns">
+          <a class="btn big" id="dl-btn" href="https://github.com/KR-CloudHAT/taxdocu-releases/releases/latest">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11"/><path d="m7 10 5 5 5-5"/><path d="M5 20h14"/></svg>
+            설치파일 받기
+          </a>
+          <a class="btn big ghost" href="#guide">사용 가이드</a>
+        </div>
+        <p class="dl-meta" id="dl-meta">최신 버전을 확인하고 있어요…</p>
+      </div>
+      <div>
+        <div class="shot">
+          <img class="light" src="images/main-light.png" alt="Tax Docu 첫 화면 — 왼쪽 거래처 목록, 오른쪽 서류 8종과 출력 버튼" width="1100" height="760">
+          <img class="dark" src="images/main-dark.png" alt="Tax Docu 첫 화면 (어두운 색)" width="1100" height="760">
+        </div>
+        <p class="shot-cap">화면 속 거래처는 예시입니다</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="band gutter">
+    <div class="inner">
+      <div class="feat">
+        <div><b>서류 8종 자동 저장</b><span>거래처를 고르면 그 거래처의 서류를 차례로 조회해 인쇄 또는 PDF</span></div>
+        <div><b>예정고지 자동체크</b><span>예정 신고를 안 하는 거래처를 홈택스 목록으로 한 번에 표시</span></div>
+        <div><b>거래처 엑셀 업로드</b><span>쓰던 업체 명부를 그대로 올리고, 칸만 맞추면 등록</span></div>
+        <div><b>자동 로그인 · 업데이트</b><span>홈택스 로그인은 버튼 하나, 새 버전은 프로그램이 알아서</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band gutter" id="start">
+    <div class="inner">
+      <h2>처음 쓰는 순서</h2>
+      <p class="lead">설치부터 첫 출력까지 세 단계예요. 자세한 내용은 <a href="#guide">사용 가이드</a>에 있습니다.</p>
+      <div class="three">
+        <div class="box"><span class="n">1단계</span><h3>설치</h3><p>받은 <b>TaxDocu-Setup</b> 파일을 실행하세요. Windows 보호 창이 뜨면 아래 그림처럼 넘기면 됩니다.</p></div>
+        <div class="box"><span class="n">2단계</span><h3>사용 신청</h3><p>처음 켜면 로그인 화면이 나와요. <span class="k">사용 신청</span>을 누르고 관리자가 승인하면 쓸 수 있습니다.</p></div>
+        <div class="box"><span class="n">3단계</span><h3>첫 출력</h3><p><span class="k">⚙ 설정</span>에서 홈택스 계정을 넣고, 거래처를 추가한 뒤 <span class="k">출력</span>을 누르세요.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band gutter" id="pc-protect">
+    <div class="inner">
+      <h2>설치할 때 "PC 보호" 창이 뜨면</h2>
+      <p class="lead">Tax Docu는 아직 마이크로소프트 인증(코드 서명)을 받지 않아서 Windows가 한 번 확인합니다. 창은 <b>파란색 또는 회색</b>일 수 있어요. 색과 상관없이 아래 두 번만 누르면 됩니다.</p>
+      <div class="wins">
+        <div>
+          <div class="win blue" aria-label="Windows의 PC 보호 창 — 추가 정보 누르기">
+            <span class="t">Windows의 PC 보호</span>
+            <span>Microsoft Defender SmartScreen에서 인식할 수 없는 앱의 시작을 차단했습니다. 이 앱을 실행하면 PC가 위험해질 수 있습니다.</span>
+            <span class="lnk hl" style="justify-self:start">추가 정보</span>
+            <div class="row"><span>실행 안 함</span></div>
+          </div>
+          <p class="win-cap"><b>①</b> 글자 아래쪽의 <span class="k">추가 정보</span>를 누릅니다.</p>
+        </div>
+        <div>
+          <div class="win blue" aria-label="Windows의 PC 보호 창 — 실행 누르기">
+            <span class="t">Windows의 PC 보호</span>
+            <span>Microsoft Defender SmartScreen에서 인식할 수 없는 앱의 시작을 차단했습니다. 이 앱을 실행하면 PC가 위험해질 수 있습니다.</span>
+            <span>앱: TaxDocu-Setup.exe<br>게시자: 알 수 없는 게시자</span>
+            <div class="row"><span class="hl">실행</span><span>실행 안 함</span></div>
+          </div>
+          <p class="win-cap"><b>②</b> 아래에 생긴 <span class="k">실행</span>을 누르면 설치가 시작돼요.</p>
+        </div>
+      </div>
+      <p class="sub" style="margin-top:10px;font-size:13.5px">그림은 파란 창이에요. 회색 창(Windows 10 일부)도 글자와 버튼 위치는 같습니다.</p>
+      <p class="note" style="margin-top:18px"><b>백신이 막을 때</b> · V3 같은 백신이 설치파일을 지우거나 막으면, 백신의 "예외" 또는 "허용"에 추가한 뒤 다시 받아 주세요. 잘 모르겠으면 프로그램 안내의 문의처로 알려 주세요.</p>
+    </div>
+  </section>
+</main>
+
+<!-- ───────── 사용 가이드 ───────── -->
+<div class="view gutter" id="view-guide" hidden>
+  <div class="inner guide">
+    <nav class="toc closed" id="toc" aria-label="가이드 목차">
+      <button class="toc-toggle" id="toc-toggle" type="button"><span id="toc-now">목차</span><span>▾</span></button>
+      <input id="toc-search" type="search" placeholder="가이드 검색" aria-label="가이드 검색">
+      <div id="toc-list"></div>
+    </nav>
+    <article id="article"></article>
+  </div>
+</div>
+
+<!-- ───────── 바뀐 점 ───────── -->
+<div class="view gutter" id="view-changes" hidden>
+  <div class="inner changes">
+    <h1>바뀐 점</h1>
+    <p class="sub">프로그램은 켜 둔 채로 새 버전을 받아 알려 줍니다. 위쪽의 <span class="k">⬇ 새 버전</span>을 누르면 바로 바뀌어요.</p>
+    <div id="rel-list"><p class="sub">목록을 불러오고 있어요…</p></div>
+  </div>
+</div>
+
+<footer class="gutter">
+  <div class="inner">
+    <span>Tax Docu · 세무대리인용 홈택스 서류 자동 출력</span>
+    <span>문의: 프로그램 아래 진행 기록의 [오류 보고] 옆 메일</span>
+  </div>
+</footer>
+
+<!-- 가이드 본문: 장마다 <section data-id data-group data-title>. 여기만 고치면 가이드가 바뀜 -->
+<template id="guide-src">
+<section data-id="install" data-group="시작" data-title="다운로드 · 설치">
+  <p>위쪽 <a href="#">다운로드</a> 탭의 <span class="k">설치파일 받기</span>로 최신 설치파일을 받으세요. Windows 10 · 11 에서 쓸 수 있어요.</p>
+  <ol>
+    <li>받은 <b>TaxDocu-Setup-버전.exe</b> 를 두 번 누릅니다.</li>
+    <li>"PC 보호" 창이 뜨면 <a href="#pc-protect">이 그림</a>처럼 넘깁니다. 파란색이든 회색이든 <span class="k">추가 정보</span> → <span class="k">실행</span>.</li>
+    <li>설치 화면에서 <b>바탕화면 바로가기</b>를 원하면 체크하고 <span class="k">설치</span>.</li>
+    <li>끝나면 <b>Tax Docu 실행</b>이 체크된 채로 <span class="k">마침</span>.</li>
+  </ol>
+  <p class="note"><b>업데이트는 다시 받지 않아도 돼요.</b> 프로그램이 새 버전을 알아서 받아 두고 위쪽에 <span class="k">⬇ 새 버전</span>을 보여 줍니다. 누르거나, 프로그램을 끌 때 설치됩니다.</p>
+</section>
+
+<section data-id="signup" data-group="시작" data-title="사용 신청 · 프로그램 로그인">
+  <p>Tax Docu는 승인받은 사람만 쓸 수 있어요. 처음 켜면 프로그램 로그인 화면이 나옵니다.</p>
+  <ol>
+    <li><span class="k">사용 신청</span>을 누르고 아이디(이메일) · 비밀번호 · 사무실 이름 · 사용자 이름을 적어 보냅니다.</li>
+    <li>"승인 대기" 화면이 나오면 관리자 승인을 기다립니다. 승인되면 같은 아이디로 로그인하세요.</li>
+    <li>로그인 정보를 저장해 두면 다음부터 자동으로 들어갑니다.</li>
+  </ol>
+  <p class="note">아이디 하나는 <b>PC 1대</b>에서 쓸 수 있어요. PC를 더 쓰려면 관리자에게 요청하세요.</p>
+</section>
+
+<section data-id="account" data-group="시작" data-title="홈택스 계정 설정">
+  <p>위쪽 오른쪽 <span class="k">⚙</span> 를 눌러 설정을 열고, 왼쪽 목차의 <b>홈택스 계정</b>에서 로그인 정보를 넣습니다. 비밀번호는 이 PC에 암호화해서 저장돼요.</p>
+  <h2>① 홈택스 로그인</h2>
+  <p>로그인 방법(아이디 + 인증서 / 인증서만)을 고르고 홈택스 아이디 · 비밀번호를 넣습니다.</p>
+  <h2>② 공동인증서</h2>
+  <p>이 PC에 있는 인증서 목록에서 <b>자동으로 고를 인증서</b>를 선택하고 인증서 비밀번호를 넣습니다. 인증서 비밀번호를 비워 두면 로그인 때마다 직접 입력해요.</p>
+  <h2>③ 세무대리인</h2>
+  <p>세무대리인 관리번호 · 비밀번호. 필요 없으면 비워 두세요.</p>
+  <p>다 넣었으면 아래 <span class="k">저장</span>. 저장해야 적용됩니다.</p>
+  <p class="note"><b>계정이 여러 개</b>라면 <span class="k">+ 계정 추가</span>로 늘리고, 위쪽 계정 칸에서 바꿔 씁니다. 거래처는 계정마다 따로 보여요.</p>
+</section>
+
+<section data-id="tour" data-group="시작" data-title="화면 둘러보기">
+  <div class="fig shot"><img class="light" src="images/main-light.png" alt="첫 화면" loading="lazy"><img class="dark" src="images/main-dark.png" alt="첫 화면 (어두운 색)" loading="lazy"></div>
+  <ul>
+    <li><b>위쪽 왼쪽</b> · <span class="k">출력 | 관리</span> 화면 바꾸기, 신고 기간(연도 · 기 · 예정/확정), 출력 방식(프린터 · PDF · 모두)</li>
+    <li><b>위쪽 오른쪽</b> · 홈택스 계정과 로그인 상태, <span class="k">로그아웃</span>, <span class="k">홈택스 ↗</span>, 공지 🔔, 설정 ⚙, 더보기 ⋯</li>
+    <li><b>왼쪽</b> · 거래처 목록. 검색 · 정렬 · <span class="k">+</span> 추가, 칸(전체 · 남음 · 마감 · 예정고지 · 폐업), 줄마다 체크와 상태</li>
+    <li><b>오른쪽</b> · 고른 거래처의 서류 타일과 <span class="k">이 거래처 출력</span></li>
+    <li><b>아래</b> · 진행 기록과 <span class="k">오류 보고</span></li>
+  </ul>
+  <p class="sub">화면 색은 설정 › 화면 · 창 에서 4가지 중 고를 수 있어요.</p>
+</section>
+
+<section data-id="add-client" data-group="거래처" data-title="건별 추가 · 수정 · 삭제">
+  <ol>
+    <li>목록 위 <span class="k">+</span> 를 누르면 오른쪽에 추가 칸이 열립니다. <b>건별 추가</b>를 고르세요.</li>
+    <li>상호와 사업자번호를 넣습니다. 번호의 <b>-</b> 와 개인/법인은 자동으로 채워져요. 이미 있는 번호는 막힙니다.</li>
+    <li>출력할 서류 타일을 켜고 <span class="k">추가</span> (Enter 도 됨). 칸이 비워지니 이어서 다음 거래처를 넣으세요.</li>
+    <li>다 넣었으면 <span class="k">닫기</span>.</li>
+  </ol>
+  <p><b>수정</b> · 거래처를 고르고 오른쪽 위 <span class="k">수정</span>. <b>삭제</b> · 수정 칸 아래 <span class="k">거래처 삭제</span>를 두 번 누릅니다.</p>
+  <p><b>순서 바꾸기</b> · 줄 왼쪽 ⠿ 를 잡고 끌어다 놓아요. 정렬 버튼으로 가나다순 보기도 됩니다.</p>
+</section>
+
+<section data-id="excel" data-group="거래처" data-title="엑셀 업로드">
+  <p>거래처가 많으면 엑셀로 한 번에 올리세요. <span class="k">+</span> → <b>엑셀 추가</b> 탭에 버튼이 있습니다.</p>
+  <h2>기본서식</h2>
+  <ol>
+    <li><span class="k">기본서식 내려받기</span>로 서식 엑셀을 받아 채웁니다.</li>
+    <li><span class="k">기본서식 업로드</span>로 올리면 줄마다 추가 / 이미 있음 / 10자리 아님 등을 보여 줘요.</li>
+    <li>빼고 싶은 줄은 오른쪽 ✕, 확인 뒤 <span class="k">추가</span>.</li>
+  </ol>
+  <h2>자유서식 (쓰던 업체 명부 그대로)</h2>
+  <ol>
+    <li><span class="k">자유서식 업로드</span>로 아무 모양의 엑셀을 고릅니다.</li>
+    <li>시트와 제목 줄을 고르고, 칸마다 상호 · 사업자번호 · 개인/법인 · 메모 등을 맞춥니다. 대부분 자동으로 맞춰져요.</li>
+    <li><span class="k">다음 — 확인 표로</span> 뒤는 기본서식과 같습니다. 같은 모양 명부는 다음부터 칸이 기억돼요.</li>
+  </ol>
+  <p class="note">이미 있는 거래처가 엑셀에 있으면 <b>정보 갱신</b>으로 관리 칸(대표자 · 연락처 등)만 바뀝니다. <span class="k">거래처 내보내기</span>로 받은 엑셀은 다른 PC에서 그대로 올릴 수 있어요.</p>
+</section>
+
+<section data-id="manage" data-group="거래처" data-title="거래처 관리 · 폐업">
+  <p>위쪽 <span class="k">관리</span>를 누르면 거래처 관리 화면이에요. 대표자 · 연락처 · 기장료 · 기장/신고 · 개업일 · 폐업일 · 담당 직원 · 특이사항을 적어 둘 수 있습니다.</p>
+  <ul>
+    <li><span class="k">전체 | 계속 | 폐업</span> 칸으로 나눠 보기 (기본은 계속)</li>
+    <li><span class="k">+ 직접 입력 추가</span> · 모든 거래처에 같은 칸을 더 만들기 (글자 · 날짜 · 숫자 · 금액)</li>
+    <li>⠿ 끌어다 놓기 · 순서는 출력 화면과 같아요. <span class="k">맨 아래로</span> 로 한 번에 내리기</li>
+  </ul>
+  <h2>폐업 거래처</h2>
+  <p>폐업일을 넣으면 출력 화면에서 주황 줄("폐업 10/10 · 11/25 신고")로 보이고, 폐업한 분기까지만 출력됩니다. 다음 달 25일이 지나면 <b>폐업</b> 칸으로 옮겨져 [전체]에서 빠져요.</p>
+</section>
+
+<section data-id="backup" data-group="거래처" data-title="백업 · 다른 PC로 옮기기">
+  <p>설정 › <b>백업 · 옮기기</b> 에서 거래처 · 출력 상태 · 설정(비밀번호 포함)을 파일 하나(<b>.taxdocu</b>)로 만듭니다.</p>
+  <ol>
+    <li><span class="k">백업 파일 만들기</span> → 백업 비밀번호(4자 이상)를 정하고 저장할 곳을 고릅니다.</li>
+    <li>다른 PC에 Tax Docu를 설치하고, 같은 메뉴의 <span class="k">백업 파일 불러오기</span>로 그 파일과 백업 비밀번호를 넣습니다.</li>
+  </ol>
+  <p class="note">백업 비밀번호를 잊으면 파일을 열 수 없어요. 불러오기 전의 자료는 데이터 폴더의 <b>백업 전 자료</b>에 따로 보관됩니다.</p>
+</section>
+
+<section data-id="print" data-group="출력" data-title="기간 · 서류 고르고 출력">
+  <ol>
+    <li>위쪽에서 <b>연도 · 기 · 예정/확정</b>을 고릅니다. 처음엔 오늘 날짜의 신고기간이 골라져 있어요.</li>
+    <li>출력 방식을 고릅니다. <span class="k">프린터</span> 종이로 · <span class="k">PDF</span> 저장 폴더에 · <span class="k">모두</span> 둘 다.</li>
+    <li>거래처 하나는 오른쪽 <span class="k">이 거래처 출력</span>. 여러 곳은 왼쪽에서 체크(또는 <span class="k">전체</span>) 후 <span class="k">선택한 N건 출력</span>.</li>
+  </ol>
+  <p>홈택스 로그인이 안 돼 있으면 출력 전에 자동으로 로그인합니다. 출력 중엔 서류 타일마다 진행 상태가 보이고, <span class="k">출력 취소</span>로 멈출 수 있어요.</p>
+  <h2>서류 옵션</h2>
+  <p>타일 아래 작은 버튼으로 이 거래처만 바꾸거나, 설정 › <b>서류 옵션</b>에서 모든 거래처 기본값을 정합니다. 예: 신용카드 신고기간에 맞춤 / 반기, 수출실적 화면만 / 화면 + 엑셀.</p>
+  <h2>출력한 다음</h2>
+  <p>다 된 거래처는 상태가 <b>출력함</b>으로 바뀌어요. 그 기간 일이 끝난 거래처는 오른쪽 위 <span class="k">마감</span>으로 표시해 두면 <b>남음</b> 칸에서 빠집니다.</p>
+</section>
+
+<section data-id="advance" data-group="출력" data-title="예정고지 자동체크">
+  <p>예정 신고 기간엔 예정고지 대상 거래처(예정 신고를 하지 않는 곳)를 따로 챙겨야 하죠.</p>
+  <ol>
+    <li>목록 위 <span class="k">예정고지 자동체크</span>를 누르면 홈택스 "수임납세자 예정고지 대상자" 목록을 읽어 대상 거래처의 <b>예정고지</b>를 켭니다 (수십 초).</li>
+    <li>줄마다 있는 <span class="k">예정고지</span> 버튼으로 직접 켜고 끌 수도 있어요.</li>
+    <li><b>예정고지</b> 칸 → <span class="k">전체</span> → <span class="k">선택한 N건 출력</span> 으로 대상 거래처만 한꺼번에 출력합니다.</li>
+  </ol>
+  <p class="note"><b>예정 + 예정고지</b> 거래처는 "예정고지 조회" 서류만 출력돼요. 확정 때는 원래 서류가 모두 나옵니다.</p>
+</section>
+
+<section data-id="printer" data-group="출력" data-title="프린터 · PDF 저장">
+  <p>설정 › <b>출력</b> 에서 프린터 · 인쇄 방식 · PDF 저장 폴더를 정합니다.</p>
+  <ul>
+    <li>프린터 목록엔 종류가 같이 보여요. <b>진짜 프린터</b>를 고르세요. "PDF로 저장" 같은 가상 프린터나 휴대폰 인쇄 앱은 종이가 안 나옵니다.</li>
+    <li><span class="k">시험 인쇄</span>로 한 장 뽑아 보고, 용지가 이상하면 "프린터 용지" · "용지 공급(트레이)"을 바꿔 보세요.</li>
+    <li>PDF는 <b>저장 폴더 › 2026년 2기 확정 › 상호_서류명.pdf</b> 처럼 기간별 폴더에 저장돼요.</li>
+  </ul>
+</section>
+
+<section data-id="hometax" data-group="출력" data-title="[홈택스] 바로 열기 · 로그아웃">
+  <p>위쪽 계정 칸의 <span class="k">홈택스 ↗</span> 를 누르면 지금 로그인된 상태 그대로 홈택스 창이 열려요. 다른 조회를 직접 할 때 씁니다.</p>
+  <p class="note">그 창에서 로그아웃하면 프로그램의 홈택스 로그인도 풀려요.</p>
+  <p><span class="k">로그아웃</span> 은 홈택스에서 로그아웃합니다. "인증서만" 로그인으로 다른 아이디를 쓸 때 먼저 누르세요.</p>
+  <p>홈택스는 같은 아이디로 동시에 로그인할 수 없어요. 다른 PC나 세무 프로그램이 같은 아이디로 들어가면 여기 로그인이 풀리고, 계정 칸이 <span class="k">로그인</span>으로 바뀝니다. 출력할 때 다시 자동으로 로그인해요.</p>
+</section>
+
+<section data-id="trouble" data-group="도움" data-title="문제 해결">
+  <h2>종이가 안 나와요</h2>
+  <p>먼저 설정 › 출력 의 프린터가 <b>진짜 프린터</b>인지 보세요. 대부분 이게 원인이에요. 그다음 <span class="k">시험 인쇄</span>.</p>
+  <h2>"서비스 중지 시간입니다"</h2>
+  <p>홈택스는 밤 · 새벽에 일부 서비스를 쉽니다. 낮에 다시 출력하세요.</p>
+  <h2>로그인이 자꾸 풀려요</h2>
+  <p>같은 홈택스 아이디로 다른 곳(다른 PC · 세무 프로그램)이 로그인하면 풀립니다. 출력할 땐 자동으로 다시 로그인해요.</p>
+  <h2>인증서를 못 골라요</h2>
+  <p>인증서가 여러 개면 설정 › 홈택스 계정 › ② 공동인증서 에서 하나를 골라야 자동 로그인이 됩니다.</p>
+  <h2>"이용할 수 없습니다"로 실패</h2>
+  <p>신고 마감이 지나면 홈택스가 일부 메뉴(예: 합계표 신고용)를 내립니다. 다음 신고기간에 다시 열려요.</p>
+</section>
+
+<section data-id="report" data-group="도움" data-title="오류 보고 · 문의">
+  <ol>
+    <li>문제가 생긴 직후 아래 진행 기록의 <span class="k">오류 보고</span>를 누릅니다.</li>
+    <li>바탕화면에 <b>zip 파일</b>이 생겨요. 로그 속 거래처 이름 · 번호는 "거래처 N"으로 가려집니다.</li>
+    <li>[오류 보고] 옆 문의 메일로 그 zip 과 어떤 상황이었는지 보내 주세요.</li>
+  </ol>
+  <p class="note">zip 안의 실패 화면 사진은 가려지지 않아요. 보내기 전에 열어 보고 괜찮을 때만 보내세요.</p>
+</section>
+</template>
+
+<script>
+(function(){
+  'use strict';
+  var REPO = 'KR-CloudHAT/taxdocu-releases';
+  var API = 'https://api.github.com/repos/' + REPO + '/releases';
+
+  // ── 가이드 만들기 ──
+  var src = document.getElementById('guide-src').content.querySelectorAll('section');
+  var pages = Array.prototype.map.call(src, function(s){
+    return { id: s.dataset.id, group: s.dataset.group, title: s.dataset.title, html: s.innerHTML, text: (s.dataset.title + ' ' + s.textContent).toLowerCase() };
+  });
+  var tocList = document.getElementById('toc-list');
+  var search = document.getElementById('toc-search');
+  var toc = document.getElementById('toc');
+
+  function drawToc(current){
+    var q = (search.value || '').trim().toLowerCase();
+    var html = '', last = '', shown = 0;
+    pages.forEach(function(p){
+      if (q && p.text.indexOf(q) < 0) return;
+      if (p.group !== last){ html += '<div class="grp">' + p.group + '</div>'; last = p.group; }
+      html += '<a href="#' + p.id + '"' + (p.id === current ? ' class="on" aria-current="page"' : '') + '>' + p.title + '</a>';
+      shown++;
+    });
+    tocList.innerHTML = shown ? html : '<div class="empty">찾는 내용이 없어요</div>';
+  }
+  search.addEventListener('input', function(){ drawToc(currentGuide); });
+  document.getElementById('toc-toggle').addEventListener('click', function(){ toc.classList.toggle('closed'); });
+
+  var currentGuide = pages[0].id;
+  function showGuide(id){
+    var i = 0; pages.forEach(function(p, n){ if (p.id === id) i = n; });
+    var p = pages[i]; currentGuide = p.id;
+    var prev = pages[i-1], next = pages[i+1];
+    document.getElementById('article').innerHTML =
+      '<span class="crumb">사용 가이드 · ' + p.group + '</span><h1>' + p.title + '</h1>' + p.html +
+      '<div class="pager">' +
+        (prev ? '<a href="#' + prev.id + '"><span>← 이전</span><b>' + prev.title + '</b></a>' : '') +
+        (next ? '<a class="next" href="#' + next.id + '"><span>다음 →</span><b>' + next.title + '</b></a>' : '') +
+      '</div>';
+    document.getElementById('toc-now').textContent = '목차 · ' + p.title;
+    toc.classList.add('closed');
+    drawToc(p.id);
+  }
+
+  // ── 주소(#)로 화면 고르기 ──
+  // # 없음 = 다운로드, #changes = 바뀐 점, #guide 또는 가이드 장 id = 가이드, 그 밖(#start 등) = 다운로드 화면의 그 칸
+  var homeAnchors = { start: 1, 'pc-protect': 1 };
+  function route(){
+    var h = decodeURIComponent(location.hash.replace(/^#/, ''));
+    var tab = 'home';
+    if (h === 'changes') tab = 'changes';
+    else if (h === 'guide') { tab = 'guide'; showGuide(pages[0].id); }
+    else if (pages.some(function(p){ return p.id === h; }) && !homeAnchors[h]) { tab = 'guide'; showGuide(h); }
+    ['home','guide','changes'].forEach(function(t){ document.getElementById('view-' + t).hidden = (t !== tab); });
+    document.querySelectorAll('.tabs a').forEach(function(a){ a.classList.toggle('on', a.dataset.tab === tab); });
+    if (tab === 'changes') loadReleases();
+    if (tab === 'home' && h && document.getElementById(h)) document.getElementById(h).scrollIntoView();
+    else window.scrollTo(0, 0);
+  }
+  window.addEventListener('hashchange', route);
+  drawToc(currentGuide);
+  route();
+
+  // ── 최신 설치파일 ──
+  function fmtDate(s){ var d = new Date(s); return d.getFullYear() + '-' + ('0'+(d.getMonth()+1)).slice(-2) + '-' + ('0'+d.getDate()).slice(-2); }
+  function exeOf(rel){ return (rel.assets || []).filter(function(a){ return /\.exe$/i.test(a.name); })[0]; }
+  var meta = document.getElementById('dl-meta');
+  fetch(API + '/latest').then(function(r){ if (!r.ok) throw 0; return r.json(); }).then(function(rel){
+    var exe = exeOf(rel); if (!exe) throw 0;
+    document.getElementById('dl-btn').href = exe.browser_download_url;
+    meta.textContent = '최신 ' + rel.tag_name.replace(/^v/, '') + ' · ' + fmtDate(rel.published_at) + ' · 약 ' + Math.round(exe.size / 1048576) + 'MB';
+  }).catch(function(){
+    meta.textContent = '버튼을 누르면 최신 버전 페이지가 열려요. 거기서 TaxDocu-Setup 으로 시작하는 .exe 파일을 받으세요.';
+  });
+
+  // ── 바뀐 점 (릴리스 설명) ──
+  var loaded = false;
+  function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+  function loadReleases(){
+    if (loaded) return; loaded = true;
+    var box = document.getElementById('rel-list');
+    fetch(API + '?per_page=30').then(function(r){ if (!r.ok) throw 0; return r.json(); }).then(function(list){
+      list = list.filter(function(r){ return !r.draft && !r.prerelease; });
+      box.innerHTML = list.map(function(r){
+        return '<div class="rel"><div><b>' + esc(r.tag_name.replace(/^v/, '')) + '</b><div class="d">' + fmtDate(r.published_at) + '</div></div><p>' + esc(r.body || '') + '</p></div>';
+      }).join('') || '<p class="sub">아직 없어요.</p>';
+    }).catch(function(){
+      loaded = false;
+      box.innerHTML = '<p class="sub">목록을 불러오지 못했어요. <a href="https://github.com/' + REPO + '/releases">릴리스 페이지</a>에서 볼 수 있어요.</p>';
+    });
+  }
+})();
+</script>
+</body>
+</html>
