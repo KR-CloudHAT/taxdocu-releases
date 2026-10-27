@@ -46,6 +46,8 @@ header .inner{display:flex;align-items:center;gap:28px;height:var(--top-h)}
 .tabs{display:flex;gap:22px;height:100%;overflow-x:auto;scrollbar-width:none}
 .tabs a{display:flex;align-items:center;color:var(--sub);text-decoration:none;font-size:14.5px;white-space:nowrap;box-shadow:inset 0 -2px 0 transparent}
 .tabs a:hover{color:var(--text)}
+.blog-link{margin-left:auto;flex:none;color:var(--sub);text-decoration:none;font-size:14px;white-space:nowrap;padding:5px 12px;border:1px solid var(--line);border-radius:8px}
+.blog-link:hover{color:var(--text);border-color:var(--sub)}
 .tabs a.on{color:var(--text);font-weight:600;box-shadow:inset 0 -2px 0 var(--accent)}
 a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
 
@@ -161,6 +163,7 @@ footer .inner{display:flex;flex-wrap:wrap;gap:6px 22px}
       <a href="#guide" data-tab="guide">사용 가이드</a>
       <a href="#changes" data-tab="changes">패치노트</a>
     </nav>
+    <a class="blog-link" href="https://cloudhat.tistory.com" target="_blank" rel="noopener">블로그 ↗</a>
   </div>
 </header>
 
